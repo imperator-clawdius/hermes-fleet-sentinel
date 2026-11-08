@@ -1,0 +1,56 @@
+name: fleet-sentinel
+version: 1.0.0
+description: "Out-of-band health for remote Hermes agent hosts: corroborated up/deaf/down verdicts, escalating alerts, and gateway recovery."
+author: "Theodore Alston"
+kind: standalone
+requires_hermes: ">=0.21.5"
+license: MIT
+tags: [fleet, monitoring, gateway, telegram, ssh, tailscale]
+provides_tools: [fleet_status, fleet_probe, fleet_recover]
+
+# Settings live under plugins.entries.fleet-sentinel.settings in config.yaml.
+# Hermes's config_schema is a mapping of top-level key -> spec; nested shapes are
+# described with JSON-schema `items` / `properties` and validated by sentinel/config.py,
+# which never raises: bad values fall back to defaults and are reported in probe output.
+config_schema:
+  hosts:
+    type: list
+    default: []
+    label: "Fleet hosts"
+    description: "Remote Hermes gateway hosts to watch. Each needs name and ssh_alias (a Host alias your ssh client resolves, with key auth that works under BatchMode)."
+    items:
+      type: object
+      required: [name, ssh_alias]
+      properties:
+        name: {type: string}
+        ssh_alias: {type: string}
+        label: {type: string}
+        tailscale_ip: {type: string}
+        lan_ip: {type: string}
+        profile: {type: string, default: "default"}
+        platform: {type: string, default: "telegram"}
+        platform_ip: {type: string, default: "149.154.166.110"}
+        ssh_port: {type: integer, default: 22}
+        unit: {type: string}
+        hermes_home: {type: string}
+        wol_mac: {type: string}
+        wol_broadcast: {type: string, default: "255.255.255.255"}
+  thresholds:
+    type: dict
+    label: "Thresholds"
+    description: "Escalation and probe timing."
+    default:
+      page_after_minutes: 60
+      repage_hours: 24
+      deaf_grace_minutes: 10
+      ssh_timeout_seconds: 12
+    properties:
+      page_after_minutes: {type: integer, default: 60}
+      repage_hours: {type: integer, default: 24}
+      deaf_grace_minutes: {type: integer, default: 10}
+      ssh_timeout_seconds: {type: integer, default: 12}
+  auto_heal:
+    type: bool
+    default: false
+    label: "Auto-heal deaf gateways"
+    description: "When a host is confirmed deaf, `tick` kills the unit's MainPID once so systemd Restart=always revives it."

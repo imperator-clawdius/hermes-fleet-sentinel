@@ -1,0 +1,42 @@
+{
+  "Version": "1.76.6-t...",
+  "BackendState": "Running",
+  "Self": {
+    "HostName": "mac-mini",
+    "DNSName": "mac-mini.tail1234.ts.net.",
+    "TailscaleIPs": [
+      "100.101.1.1"
+    ],
+    "Online": true
+  },
+  "Peer": {
+    "nodekey:aaa": {
+      "HostName": "pi-host",
+      "DNSName": "pi-host.tail1234.ts.net.",
+      "TailscaleIPs": [
+        "100.101.1.10",
+        "fd7a:115c:a1e0::a"
+      ],
+      "Online": true,
+      "LastSeen": "0001-01-01T00:00:00Z"
+    },
+    "nodekey:bbb": {
+      "HostName": "gpu-host",
+      "DNSName": "gpu-host.tail1234.ts.net.",
+      "TailscaleIPs": [
+        "100.101.1.11"
+      ],
+      "Online": false,
+      "LastSeen": "2026-11-04T01:09:41Z"
+    },
+    "nodekey:ccc": {
+      "HostName": "orion",
+      "DNSName": "orion.tail1234.ts.net.",
+      "TailscaleIPs": [
+        "100.101.1.12"
+      ],
+      "Online": true,
+      "LastSeen": "0001-01-01T00:00:00Z"
+    }
+  }
+}

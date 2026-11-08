@@ -1,0 +1,8 @@
+.venv/
+.venv311/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Scraped Hermes docs used as build reference; not plugin source.
+docs/reference/

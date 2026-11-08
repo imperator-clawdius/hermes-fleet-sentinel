@@ -1,0 +1,24 @@
+{
+  "pid": 424243,
+  "kind": "hermes-gateway",
+  "argv": [
+    "/home/hermes/.hermes/hermes-agent/hermes_cli/main.py",
+    "gateway",
+    "run",
+    "--replace"
+  ],
+  "start_time": null,
+  "gateway_state": "running",
+  "exit_reason": null,
+  "restart_requested": false,
+  "active_agents": 0,
+  "platforms": {
+    "telegram": {
+      "state": "disconnected",
+      "error_code": null,
+      "error_message": null,
+      "updated_at": "2026-10-11T14:03:22.104981+00:00"
+    }
+  },
+  "updated_at": "2026-10-11T14:03:27.511204+00:00"
+}

@@ -1,0 +1,9 @@
+{
+  "Version": "1.76.6-t...",
+  "BackendState": "Stopped",
+  "Self": null,
+  "Peer": null,
+  "Health": [
+    "Tailscale is stopped."
+  ]
+}
