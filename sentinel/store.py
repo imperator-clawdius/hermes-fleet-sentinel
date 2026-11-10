@@ -82,11 +82,19 @@ class AlertState:
 
 
 def hermes_home() -> Path:
-    """Standalone fallback only; inside Hermes ``plugin_db`` resolves the profile's home."""
+    """Standalone fallback only; inside Hermes ``plugin_db`` resolves the profile's home.
+
+    Prefers Hermes's own resolver so a non-default ``HERMES_HOME`` (multi-profile
+    installs, launchd units) is honoured instead of assuming ``~/.hermes``.
+    """
     env = os.environ.get("HERMES_HOME")
     if env:
         return Path(env).expanduser()
-    return Path.home() / ".hermes"
+    try:
+        from hermes_constants import get_hermes_home  # available inside Hermes
+        return Path(get_hermes_home()).expanduser()
+    except Exception:
+        return Path.home() / ".hermes"
 
 
 def _connect_default() -> tuple[sqlite3.Connection, str]:

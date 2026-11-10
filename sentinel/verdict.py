@@ -27,7 +27,7 @@ UNKNOWN = "unknown"
 VERDICTS = (UP, DEAF, DOWN_PHYSICAL, DEGRADED, UNKNOWN)
 
 # gateway_state.json is NOT a heartbeat: Hermes writes it when gateway state CHANGES, so a
-# healthy, idle gateway can carry a very old updated_at. Live example: Skorpius's file was
+# healthy, idle gateway can carry a very old updated_at. Seen in the field: a host's file was
 # stamped 2026-10-11, 24 days old when probed, while the gateway held 2 live ESTABLISHED
 # Telegram sockets. An old stamp means only "no state change recorded recently", never "the
 # gateway is dead". Past this age we stop trusting the file's reported fields

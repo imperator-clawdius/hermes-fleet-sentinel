@@ -1,5 +1,5 @@
 name: fleet-sentinel
-version: 1.0.0
+version: 1.0.1
 description: "Out-of-band health for remote Hermes agent hosts: corroborated up/deaf/down verdicts, escalating alerts, and gateway recovery."
 author: "Theodore Alston"
 kind: standalone
@@ -7,6 +7,7 @@ requires_hermes: ">=0.21.5"
 license: MIT
 tags: [fleet, monitoring, gateway, telegram, ssh, tailscale]
 provides_tools: [fleet_status, fleet_probe, fleet_recover]
+provides_hooks: [pre_tool_call]
 
 # Settings live under plugins.entries.fleet-sentinel.settings in config.yaml.
 # Hermes's config_schema is a mapping of top-level key -> spec; nested shapes are

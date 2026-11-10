@@ -205,7 +205,7 @@ Escalation:
 first page already shows the true outage length:
 
 ```text
-🔴 Cerberus is offline — down 1d 3h.
+🔴 gpu-host is offline — down 1d 3h.
 Host unreachable on the tailnet and LAN (power or cable). Last verified up: 2026-11-01 16:48.
 Physical: check power LED, PSU, reseat ethernet.
 ```
@@ -227,6 +227,11 @@ Physical: check power LED, PSU, reseat ethernet.
   (`<hermes_home>/plugin-data/fleet-sentinel/state.db`). Override it with `FLEET_SENTINEL_DB`.
   No credentials are read or stored. ssh uses your existing key setup, and the agent socket is
   explicitly disabled.
+- **Approval:** a *real* `fleet_recover` (an explicit `dry_run: false` from the model) is
+  escalated to Hermes's human-approval gate by a `pre_tool_call` hook, and the gate fails
+  closed in unattended runs. Flags the model sets are not consent. Dry runs, the CLI
+  `--execute` path, and user-enabled `auto_heal` are not gated — none of them originate
+  from a model turn.
 - **Background work:** none. Periodic checks run only if you register the cron job yourself
   (`scripts/fleet-sentinel-tick.sh`, a separate process that shares the same settings and store).
 
@@ -238,9 +243,9 @@ hermes plugins doctor .
 hermes plugins validate .
 ```
 
-`tests/fixtures/` holds probe payloads: a healthy host; the Skorpius stale-state case (state file
-says `disconnected`, recorded pid 424243 vs live MainPID 424242, stamped 24 days earlier,
-2 ESTABLISHED sockets); a
+`tests/fixtures/` holds probe payloads: a healthy host; a stale-state case (the state file
+says `disconnected`, its recorded pid differs from the live MainPID, and it is stamped weeks
+earlier, while 2 ESTABLISHED sockets exist); a
 deaf gateway; tailscale stopped (both JSON and text forms); and garbage or truncated output.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the module layout and data flow.

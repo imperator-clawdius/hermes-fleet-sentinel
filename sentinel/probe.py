@@ -154,6 +154,18 @@ class CommandResult:
 
 Runner = Callable[[Sequence[str], float, Optional[str]], CommandResult]
 
+# ssh only needs PATH, HOME (for ~/.ssh and ~/.ssh/config) and LANG. Passing the
+# full agent environment to a subprocess that talks to another machine is needless
+# exposure, so children get this allowlist and nothing else.
+_CHILD_ENV_KEYS = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR")
+
+
+def child_env() -> dict[str, str]:
+    """Minimal, explicit environment for ``ssh``/``tailscale`` subprocesses."""
+    env = {key: os.environ[key] for key in _CHILD_ENV_KEYS if key in os.environ}
+    env.setdefault("PATH", "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
+    return env
+
 
 def run_bounded(argv: Sequence[str], timeout: float, input_text: Optional[str] = None) -> CommandResult:
     """Run ``argv`` with a hard wall-clock ``timeout``. Never raises."""
@@ -163,7 +175,7 @@ def run_bounded(argv: Sequence[str], timeout: float, input_text: Optional[str] =
         proc = subprocess.run(
             argv, input=input_text, capture_output=True, text=True, timeout=timeout,
             stdin=None if input_text is not None else subprocess.DEVNULL,
-            errors="replace",
+            errors="replace", env=child_env(),
         )
     except subprocess.TimeoutExpired as exc:
         def _s(v: Any) -> str:

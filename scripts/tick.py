@@ -46,8 +46,37 @@ if str(PLUGIN_ROOT) not in sys.path:
     sys.path.insert(0, str(PLUGIN_ROOT))
 
 
+def _default_hermes_home() -> Path:
+    """Hermes's own home resolver, with a last-resort ``~/.hermes`` fallback.
+
+    Resolved before the plugin package is importable, so it is fetched by path
+    from a checkout rather than assumed to be on ``sys.path``.
+    """
+    env = os.environ.get("HERMES_HOME")
+    if env:
+        return Path(env).expanduser()
+    for checkout in _checkout_roots():
+        if (checkout / "hermes_constants.py").is_file():
+            if str(checkout) not in sys.path:
+                sys.path.append(str(checkout))
+            try:
+                from hermes_constants import get_hermes_home
+                return Path(get_hermes_home()).expanduser()
+            except Exception:
+                break
+    return Path.home() / ".hermes"
+
+
+def _checkout_roots() -> list[Path]:
+    out = []
+    if os.environ.get("HERMES_AGENT_DIR"):
+        out.append(Path(os.environ["HERMES_AGENT_DIR"]).expanduser())
+    out += [Path.home() / ".hermes" / "hermes-agent"]
+    return out
+
+
 def _hermes_checkouts() -> list[Path]:
-    home = Path(os.environ.get("HERMES_HOME") or Path.home() / ".hermes").expanduser()
+    home = _default_hermes_home()
     out = []
     if os.environ.get("HERMES_AGENT_DIR"):
         out.append(Path(os.environ["HERMES_AGENT_DIR"]).expanduser())

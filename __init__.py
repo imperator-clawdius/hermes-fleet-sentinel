@@ -13,12 +13,17 @@ _SETTING_KEYS = ("hosts", "thresholds", "auto_heal")
 
 def register(ctx: Any) -> None:
     from .sentinel import cli
+    from .sentinel.approval import approval_hook
     from .sentinel.runtime import Sentinel
     from .sentinel.tools import EMOJI, SCHEMAS, TOOLSET, make_handlers
 
     def settings() -> dict[str, Any]:
         raw = {key: ctx.get_config(key) for key in _SETTING_KEYS}
         return {k: v for k, v in raw.items() if v is not None}
+
+    # A model-set flag is not consent: any fleet_recover that would act is
+    # escalated to the human-approval gate (fails closed when unattended).
+    ctx.register_hook("pre_tool_call", approval_hook)
 
     sentinel = Sentinel(settings)
     handlers = make_handlers(sentinel)
